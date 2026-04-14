@@ -45,6 +45,10 @@ class Exception extends \Exception
 
     public const PARAMS_STRIPE_BODY_INVALID = 9225;
 
+    public const PARAMS_AIRWALLEX_URL_MISSING = 9226;
+
+    public const PARAMS_AIRWALLEX_BODY_INVALID = 9227;
+
     /**
      * 关于响应.
      */
@@ -71,9 +75,12 @@ class Exception extends \Exception
 
     public const CONFIG_STRIPE_INVALID = 9407;
 
+
     public const CONFIG_PROVIDER_INVALID = 9408;
 
     public const CONFIG_CERT_PARSE_FAILED = 9409;
+
+    public const CONFIG_AIRWALLEX_INVALID = 9408;
 
     /**
      * 关于签名.
