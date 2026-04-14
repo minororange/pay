@@ -14,16 +14,16 @@ use Yansongda\Artful\Event\HttpEnd;
 use Yansongda\Artful\Event\HttpStart;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
-use Yansongda\Pay\Provider\Alipay;
 use Yansongda\Pay\Provider\Airwallex;
+use Yansongda\Pay\Provider\Alipay;
 use Yansongda\Pay\Provider\Douyin;
 use Yansongda\Pay\Provider\Jsb;
 use Yansongda\Pay\Provider\Paypal;
 use Yansongda\Pay\Provider\Stripe;
 use Yansongda\Pay\Provider\Unipay;
 use Yansongda\Pay\Provider\Wechat;
-use Yansongda\Pay\Service\AlipayServiceProvider;
 use Yansongda\Pay\Service\AirwallexServiceProvider;
+use Yansongda\Pay\Service\AlipayServiceProvider;
 use Yansongda\Pay\Service\DouyinServiceProvider;
 use Yansongda\Pay\Service\JsbServiceProvider;
 use Yansongda\Pay\Service\PaypalServiceProvider;
@@ -32,14 +32,14 @@ use Yansongda\Pay\Service\UnipayServiceProvider;
 use Yansongda\Pay\Service\WechatServiceProvider;
 
 /**
- * @method static Alipay alipay(array $config = [], $container = null)
+ * @method static Alipay    alipay(array $config = [], $container = null)
  * @method static Airwallex airwallex(array $config = [], $container = null)
- * @method static Wechat wechat(array $config = [], $container = null)
- * @method static Unipay unipay(array $config = [], $container = null)
- * @method static Jsb    jsb(array $config = [], $container = null)
- * @method static Douyin douyin(array $config = [], $container = null)
- * @method static Paypal paypal(array $config = [], $container = null)
- * @method static Stripe stripe(array $config = [], $container = null)
+ * @method static Wechat    wechat(array $config = [], $container = null)
+ * @method static Unipay    unipay(array $config = [], $container = null)
+ * @method static Jsb       jsb(array $config = [], $container = null)
+ * @method static Douyin    douyin(array $config = [], $container = null)
+ * @method static Paypal    paypal(array $config = [], $container = null)
+ * @method static Stripe    stripe(array $config = [], $container = null)
  */
 class Pay
 {
@@ -143,7 +143,7 @@ class Pay
         return Artful::get($service);
     }
 
-    public static function setContainer(Closure|ContainerInterface|null $container): void
+    public static function setContainer(null|Closure|ContainerInterface $container): void
     {
         Artful::setContainer($container);
     }
