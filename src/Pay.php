@@ -143,7 +143,7 @@ class Pay
         return Artful::get($service);
     }
 
-    public static function setContainer(null|Closure|ContainerInterface $container): void
+    public static function setContainer(Closure|ContainerInterface|null $container): void
     {
         Artful::setContainer($container);
     }
