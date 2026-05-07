@@ -4,13 +4,23 @@ declare(strict_types=1);
 
 namespace Yansongda\Pay\Tests\Plugin\Airwallex\V1\Pay;
 
+use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Plugin\Airwallex\V1\Pay\CancelPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
 class CancelPluginTest extends TestCase
 {
+    public function testMissingId()
+    {
+        self::expectException(InvalidParamsException::class);
+        self::expectExceptionCode(Exception::PARAMS_NECESSARY_PARAMS_MISSING);
+
+        (new CancelPlugin())->assembly((new Rocket())->setPayload(new Collection([])), fn ($rocket) => $rocket);
+    }
+
     public function testNormal()
     {
         $result = (new CancelPlugin())->assembly(

@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Yansongda\Artful\Contract\HttpClientInterface;
 use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Plugin\AddPayloadBodyPlugin;
@@ -115,6 +116,17 @@ class AirwallexTest extends TestCase
 
         self::assertInstanceOf(ServerRequest::class, $request);
         self::assertStringContainsString('payment_intent.created', (string) $request->getBody());
+    }
+
+    public function testGetCallbackParamsFromGlobals()
+    {
+        $provider = Pay::airwallex();
+        $method = new \ReflectionMethod($provider, 'getCallbackParams');
+        $method->setAccessible(true);
+
+        $request = $method->invoke($provider);
+
+        self::assertInstanceOf(ServerRequestInterface::class, $request);
     }
 
     public function testQuery()

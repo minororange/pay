@@ -9,11 +9,6 @@ use Yansongda\Pay\Config\AirwallexConfig;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Tests\TestCase;
 
-/**
- * @internal
- *
- * @coversNothing
- */
 class AirwallexConfigTest extends TestCase
 {
     private array $validConfig;
@@ -87,5 +82,24 @@ class AirwallexConfigTest extends TestCase
 
         self::assertSame('airwallex_access_token', $config->getAccessToken());
         self::assertSame(1893456000, $config->getAccessTokenExpiry());
+    }
+
+    public function testNullableOptionalFields(): void
+    {
+        $config = new AirwallexConfig(array_merge($this->validConfig, [
+            'webhook_secret' => null,
+            'return_url' => null,
+            'api_version' => null,
+            'on_behalf_of' => null,
+            'access_token' => null,
+            'access_token_expiry' => null,
+        ]));
+
+        self::assertNull($config->getWebhookSecret());
+        self::assertNull($config->getReturnUrl());
+        self::assertNull($config->getApiVersion());
+        self::assertNull($config->getOnBehalfOf());
+        self::assertNull($config->getAccessToken());
+        self::assertNull($config->getAccessTokenExpiry());
     }
 }
