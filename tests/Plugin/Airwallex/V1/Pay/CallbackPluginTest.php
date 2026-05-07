@@ -64,4 +64,23 @@ class CallbackPluginTest extends TestCase
         self::assertEquals('evt_test123', $result->getPayload()->get('id'));
         self::assertEquals('payment_intent.succeeded', $result->getDestination()->get('name'));
     }
+
+    public function testCallbackUsesTenantConfig()
+    {
+        $body = json_encode([
+            'id' => 'evt_secondary',
+            'name' => 'payment_intent.succeeded',
+        ]);
+        $timestamp = (string) ((int) (microtime(true) * 1000));
+        $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_secondary_webhook_secret');
+        $request = new ServerRequest('POST', 'https://example.com', [
+            'x-timestamp' => $timestamp,
+            'x-signature' => $signature,
+        ], $body);
+
+        $result = $this->plugin->assembly((new Rocket())->setParams(['_request' => $request, '_params' => ['_config' => 'secondary']]), fn ($rocket) => $rocket);
+
+        self::assertEquals('evt_secondary', $result->getPayload()->get('id'));
+        self::assertEquals('payment_intent.succeeded', $result->getDestination()->get('name'));
+    }
 }

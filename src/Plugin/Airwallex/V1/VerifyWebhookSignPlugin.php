@@ -36,7 +36,7 @@ class VerifyWebhookSignPlugin implements PluginInterface
             throw new InvalidParamsException(Exception::PARAMS_CALLBACK_REQUEST_INVALID, '参数异常: Airwallex 回调请求不正确');
         }
 
-        self::verifyAirwallexWebhookSign($request, $params['_params'] ?? []);
+        self::verifyAirwallexWebhookSign($request, $params);
 
         Logger::info('[Airwallex][V1][VerifyWebhookSignPlugin] 插件装载完毕', ['rocket' => $rocket]);
 

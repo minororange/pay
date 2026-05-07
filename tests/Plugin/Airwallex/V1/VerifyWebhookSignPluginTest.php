@@ -107,6 +107,24 @@ class VerifyWebhookSignPluginTest extends TestCase
         self::assertInstanceOf(Rocket::class, $result);
     }
 
+    public function testPluginUsesTenantConfig()
+    {
+        $body = '{"id":"evt_test","name":"payment_intent.succeeded"}';
+        $timestamp = (string) ((int) (microtime(true) * 1000));
+        $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_secondary_webhook_secret');
+        $request = new ServerRequest('POST', 'https://example.com', [
+            'x-timestamp' => $timestamp,
+            'x-signature' => $signature,
+        ], $body);
+
+        $result = (new VerifyWebhookSignPlugin())->assembly(
+            (new Rocket())->setParams(['_config' => 'secondary'])->setDestinationOrigin($request),
+            fn ($rocket) => $rocket
+        );
+
+        self::assertInstanceOf(Rocket::class, $result);
+    }
+
     public function testPluginMissingRequestThrowsException()
     {
         self::expectException(InvalidParamsException::class);

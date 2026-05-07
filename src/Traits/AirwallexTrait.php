@@ -21,6 +21,7 @@ use Yansongda\Pay\Plugin\Airwallex\V1\GetAccessTokenPlugin;
 use Yansongda\Pay\Plugin\Airwallex\V1\ResponsePlugin;
 use Yansongda\Pay\Provider\Airwallex;
 use Yansongda\Supports\Collection;
+use Yansongda\Supports\Str;
 
 trait AirwallexTrait
 {
@@ -46,11 +47,7 @@ trait AirwallexTrait
 
     public static function getAirwallexRequestId(): string
     {
-        $data = random_bytes(16);
-        $data[6] = chr((ord($data[6]) & 0x0F) | 0x40);
-        $data[8] = chr((ord($data[8]) & 0x3F) | 0x80);
-
-        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        return Str::uuidV4();
     }
 
     /**
