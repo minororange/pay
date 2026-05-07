@@ -8,11 +8,15 @@ use Closure;
 use Psr\Http\Message\ServerRequestInterface;
 use Yansongda\Artful\Contract\PluginInterface;
 use Yansongda\Artful\Direction\NoHttpRequestDirection;
+use Yansongda\Artful\Exception\ContainerException;
+use Yansongda\Artful\Exception\InvalidConfigException;
 use Yansongda\Artful\Exception\InvalidParamsException;
+use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
 use Yansongda\Pay\Exception\Exception;
-use Yansongda\Pay\Plugin\Airwallex\V1\VerifyWebhookSignPlugin;
+use Yansongda\Pay\Exception\InvalidSignException;
+use Yansongda\Pay\Traits\AirwallexTrait;
 use Yansongda\Supports\Collection;
 
 /**
@@ -20,8 +24,14 @@ use Yansongda\Supports\Collection;
  */
 class CallbackPlugin implements PluginInterface
 {
+    use AirwallexTrait;
+
     /**
+     * @throws ContainerException
+     * @throws InvalidConfigException
      * @throws InvalidParamsException
+     * @throws InvalidSignException
+     * @throws ServiceNotFoundException
      */
     public function assembly(Rocket $rocket, Closure $next): Rocket
     {
@@ -29,7 +39,8 @@ class CallbackPlugin implements PluginInterface
 
         $this->init($rocket);
 
-        (new VerifyWebhookSignPlugin())->assembly($rocket, static fn (Rocket $rocket): Rocket => $rocket);
+        /* @phpstan-ignore-next-line */
+        self::verifyAirwallexWebhookSign($rocket->getDestinationOrigin(), $rocket->getParams());
 
         $body = json_decode((string) $rocket->getDestination()->getBody(), true);
 

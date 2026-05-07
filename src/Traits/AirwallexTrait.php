@@ -68,7 +68,7 @@ trait AirwallexTrait
         }
 
         if (empty($config->getClientId()) || empty($config->getApiKey())) {
-            throw new InvalidConfigException(Exception::CONFIG_AIRWALLEX_INVALID, 'Config error: missing Airwallex config -- [client_id] or [api_key]');
+            throw new InvalidConfigException(Exception::CONFIG_AIRWALLEX_INVALID, '配置错误: Airwallex 配置缺少 [client_id] 或 [api_key]');
         }
 
         $result = Artful::artful([
@@ -101,7 +101,7 @@ trait AirwallexTrait
         $webhookSecret = $config->getWebhookSecret();
 
         if (empty($webhookSecret)) {
-            throw new InvalidConfigException(Exception::CONFIG_AIRWALLEX_INVALID, 'Config error: missing Airwallex config -- [webhook_secret]');
+            throw new InvalidConfigException(Exception::CONFIG_AIRWALLEX_INVALID, '配置错误: Airwallex 配置缺少 [webhook_secret]');
         }
 
         $timestamp = $request->getHeaderLine('x-timestamp');
@@ -109,17 +109,17 @@ trait AirwallexTrait
         $body = (string) $request->getBody();
 
         if (empty($signature) || empty($timestamp)) {
-            throw new InvalidSignException(Exception::SIGN_EMPTY, 'Signature error: Airwallex webhook signature header is empty.', ['headers' => $request->getHeaders(), 'body' => $body]);
+            throw new InvalidSignException(Exception::SIGN_EMPTY, '签名错误: Airwallex webhook 签名请求头为空', ['headers' => $request->getHeaders(), 'body' => $body]);
         }
 
         $expectedSignature = hash_hmac('sha256', $timestamp.$body, $webhookSecret);
 
         if (!hash_equals($expectedSignature, $signature)) {
-            throw new InvalidSignException(Exception::SIGN_ERROR, 'Signature error: failed to verify Airwallex webhook signature.', ['headers' => $request->getHeaders(), 'body' => $body]);
+            throw new InvalidSignException(Exception::SIGN_ERROR, '签名错误: Airwallex webhook 签名验证失败', ['headers' => $request->getHeaders(), 'body' => $body]);
         }
 
         if (abs((int) (microtime(true) * 1000) - (int) $timestamp) > 300000) {
-            throw new InvalidSignException(Exception::SIGN_ERROR, 'Signature error: Airwallex webhook signature timestamp is expired.', ['timestamp' => $timestamp]);
+            throw new InvalidSignException(Exception::SIGN_ERROR, '签名错误: Airwallex webhook 签名时间戳已过期', ['timestamp' => $timestamp]);
         }
     }
 }

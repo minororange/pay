@@ -124,7 +124,7 @@ class AirwallexConfig extends AbstractConfig
             if (empty($this->{$prop})) {
                 throw new InvalidConfigException(
                     Exception::CONFIG_AIRWALLEX_INVALID,
-                    "Config error: missing Airwallex config -- [{$key}]"
+                    "配置错误: Airwallex 配置缺少 [{$key}]"
                 );
             }
         }
