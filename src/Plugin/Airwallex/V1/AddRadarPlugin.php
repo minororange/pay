@@ -12,6 +12,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\AirwallexConfig;
 use Yansongda\Pay\Traits\AirwallexTrait;
 use Yansongda\Supports\Collection;
 
@@ -35,6 +36,8 @@ class AddRadarPlugin implements PluginInterface
 
         $params = $rocket->getParams();
         $payload = $rocket->getPayload();
+
+        /** @var AirwallexConfig $config */
         $config = self::getProviderConfig('airwallex', $params);
 
         $rocket->setRadar(new Request(
@@ -49,7 +52,7 @@ class AddRadarPlugin implements PluginInterface
         return $next($rocket);
     }
 
-    protected function getHeaders(array $config, ?Collection $payload): array
+    protected function getHeaders(AirwallexConfig $config, ?Collection $payload): array
     {
         $headers = [
             'User-Agent' => 'yansongda/pay-v3',
@@ -58,17 +61,17 @@ class AddRadarPlugin implements PluginInterface
         ];
 
         if ('client' === $payload?->get('_auth_type')) {
-            $headers['x-client-id'] = $config['client_id'] ?? '';
-            $headers['x-api-key'] = $config['api_key'] ?? '';
+            $headers['x-client-id'] = $config->getClientId();
+            $headers['x-api-key'] = $config->getApiKey();
         } else {
             $headers['Authorization'] = 'Bearer '.($payload?->get('_access_token') ?? '');
         }
 
-        if (!empty($config['api_version'])) {
-            $headers['x-api-version'] = $config['api_version'];
+        if (!empty($config->getApiVersion())) {
+            $headers['x-api-version'] = $config->getApiVersion();
         }
 
-        $onBehalfOf = $payload?->get('_on_behalf_of') ?? $config['on_behalf_of'] ?? null;
+        $onBehalfOf = $payload?->get('_on_behalf_of') ?? $config->getOnBehalfOf();
 
         if (!empty($onBehalfOf)) {
             $headers['x-on-behalf-of'] = $onBehalfOf;

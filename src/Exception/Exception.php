@@ -80,7 +80,7 @@ class Exception extends \Exception
 
     public const CONFIG_CERT_PARSE_FAILED = 9409;
 
-    public const CONFIG_AIRWALLEX_INVALID = 9408;
+    public const CONFIG_AIRWALLEX_INVALID = 9410;
 
     /**
      * 关于签名.

@@ -48,6 +48,7 @@ class Pay
      */
     public const PROVIDER_WECHAT = 'wechat';
     public const PROVIDER_ALIPAY = 'alipay';
+    public const PROVIDER_AIRWALLEX = 'airwallex';
     public const PROVIDER_UNIPAY = 'unipay';
     public const PROVIDER_JSB = 'jsb';
     public const PROVIDER_DOUYIN = 'douyin';

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Yansongda\Pay\Service;
 
-use Yansongda\Artful\Contract\ServiceProviderInterface;
-use Yansongda\Pay\Pay;
 use Yansongda\Pay\Provider\Airwallex;
 
-class AirwallexServiceProvider implements ServiceProviderInterface
+class AirwallexServiceProvider extends AbstractServiceProvider
 {
-    public function register(mixed $data = null): void
+    protected function getProviderClass(): string
     {
-        $service = new Airwallex();
+        return Airwallex::class;
+    }
 
-        Pay::set(Airwallex::class, $service);
-        Pay::set('airwallex', $service);
+    protected function getProviderName(): string
+    {
+        return 'airwallex';
     }
 }
