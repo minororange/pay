@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Yansongda\Pay\Tests\Traits;
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Yansongda\Artful\Contract\ConfigInterface;
+use Yansongda\Artful\Exception\InvalidConfigException;
 use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Pay\Config\AirwallexConfig;
 use Yansongda\Pay\Exception\Exception;
@@ -19,11 +21,6 @@ class AirwallexTraitStub
     use AirwallexTrait;
 }
 
-/**
- * @internal
- *
- * @coversNothing
- */
 class AirwallexTraitTest extends TestCase
 {
     public function testGetAirwallexRequestId(): void
@@ -53,6 +50,28 @@ class AirwallexTraitTest extends TestCase
         self::expectException(InvalidParamsException::class);
         self::expectExceptionCode(Exception::PARAMS_AIRWALLEX_URL_MISSING);
         AirwallexTraitStub::getAirwallexUrl($config, new Collection([]));
+    }
+
+    public function testGetAirwallexAccessTokenFromCache(): void
+    {
+        /** @var AirwallexConfig $config */
+        $config = Pay::get(ConfigInterface::class)->get('airwallex.default');
+        $config->setAccessToken('cached_airwallex_token');
+        $config->setAccessTokenExpiry(time() + 3600);
+
+        self::assertSame('cached_airwallex_token', AirwallexTraitStub::getAirwallexAccessToken([]));
+    }
+
+    public function testGetAirwallexAccessTokenMissingCredentials(): void
+    {
+        /** @var AirwallexConfig $config */
+        $config = Pay::get(ConfigInterface::class)->get('airwallex.default');
+        $config->setClientId('');
+
+        self::expectException(InvalidConfigException::class);
+        self::expectExceptionCode(Exception::CONFIG_AIRWALLEX_INVALID);
+
+        AirwallexTraitStub::getAirwallexAccessToken([]);
     }
 
     public function testVerifyAirwallexWebhookSignEmptySignature(): void
