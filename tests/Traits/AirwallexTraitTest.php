@@ -60,7 +60,7 @@ class AirwallexTraitTest extends TestCase
     public function testVerifyAirwallexWebhookSign(): void
     {
         $body = '{"id":"evt_test","name":"payment_intent.succeeded"}';
-        $timestamp = '1710000000000';
+        $timestamp = (string) ((int) (microtime(true) * 1000));
         $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_webhook_secret');
         $request = new ServerRequest('POST', 'https://pay.yansongda.cn/airwallex/notify', [
             'x-timestamp' => $timestamp,
@@ -70,5 +70,21 @@ class AirwallexTraitTest extends TestCase
         AirwallexTraitStub::verifyAirwallexWebhookSign($request, []);
 
         self::assertTrue(true);
+    }
+
+    public function testVerifyAirwallexWebhookSignExpiredTimestamp(): void
+    {
+        $body = '{"id":"evt_test","name":"payment_intent.succeeded"}';
+        $timestamp = (string) (((int) (microtime(true) * 1000)) - 301000);
+        $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_webhook_secret');
+        $request = new ServerRequest('POST', 'https://pay.yansongda.cn/airwallex/notify', [
+            'x-timestamp' => $timestamp,
+            'x-signature' => $signature,
+        ], $body);
+
+        self::expectException(InvalidSignException::class);
+        self::expectExceptionCode(Exception::SIGN_ERROR);
+
+        AirwallexTraitStub::verifyAirwallexWebhookSign($request, []);
     }
 }

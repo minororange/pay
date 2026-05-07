@@ -120,5 +120,9 @@ trait AirwallexTrait
         if (!hash_equals($expectedSignature, $signature)) {
             throw new InvalidSignException(Exception::SIGN_ERROR, 'Signature error: failed to verify Airwallex webhook signature.', ['headers' => $request->getHeaders(), 'body' => $body]);
         }
+
+        if (abs((int) (microtime(true) * 1000) - (int) $timestamp) > 300000) {
+            throw new InvalidSignException(Exception::SIGN_ERROR, 'Signature error: Airwallex webhook signature timestamp is expired.', ['timestamp' => $timestamp]);
+        }
     }
 }

@@ -58,10 +58,26 @@ class VerifyWebhookSignPluginTest extends TestCase
         self::verifyWebhookSign($request, []);
     }
 
+    public function testExpiredTimestampThrowsException()
+    {
+        $body = '{"id":"evt_test"}';
+        $timestamp = (string) (((int) (microtime(true) * 1000)) - 301000);
+        $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_webhook_secret');
+        $request = new ServerRequest('POST', 'https://example.com', [
+            'x-timestamp' => $timestamp,
+            'x-signature' => $signature,
+        ], $body);
+
+        self::expectException(InvalidSignException::class);
+        self::expectExceptionCode(Exception::SIGN_ERROR);
+
+        self::verifyWebhookSign($request, []);
+    }
+
     public function testValidSignaturePasses()
     {
         $body = '{"id":"evt_test","name":"payment_intent.succeeded"}';
-        $timestamp = '1710000000000';
+        $timestamp = (string) ((int) (microtime(true) * 1000));
         $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_webhook_secret');
         $request = new ServerRequest('POST', 'https://example.com', [
             'x-timestamp' => $timestamp,
@@ -76,7 +92,7 @@ class VerifyWebhookSignPluginTest extends TestCase
     public function testPluginUsesDestinationOriginRequest()
     {
         $body = '{"id":"evt_test","name":"payment_intent.succeeded"}';
-        $timestamp = '1710000000000';
+        $timestamp = (string) ((int) (microtime(true) * 1000));
         $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_webhook_secret');
         $request = new ServerRequest('POST', 'https://example.com', [
             'x-timestamp' => $timestamp,

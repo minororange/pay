@@ -33,7 +33,7 @@ class CallbackPluginTest extends TestCase
     public function testInvalidJsonBodyThrowsException()
     {
         $body = 'not-valid-json';
-        $timestamp = '1710000000000';
+        $timestamp = (string) ((int) (microtime(true) * 1000));
         $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_webhook_secret');
         $request = new ServerRequest('POST', 'https://example.com', [
             'x-timestamp' => $timestamp,
@@ -52,7 +52,7 @@ class CallbackPluginTest extends TestCase
             'id' => 'evt_test123',
             'name' => 'payment_intent.succeeded',
         ]);
-        $timestamp = '1710000000000';
+        $timestamp = (string) ((int) (microtime(true) * 1000));
         $signature = hash_hmac('sha256', $timestamp.$body, 'airwallex_webhook_secret');
         $request = new ServerRequest('POST', 'https://example.com', [
             'x-timestamp' => $timestamp,
